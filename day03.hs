@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Main where
 
 import Control.Applicative ((*>), (<*), (<*>))
@@ -22,4 +20,4 @@ parser skip = many $ try (manyTill skip (lookAhead (try mul)) *> mul)
 mul :: Parser Int
 mul = string "mul" *> between (char '(') (char ')') ((*) <$> decimal <* char ',' <*> decimal)
 
-skipDisabled = try $ string "don't()" *> manyTill anySingle (void (string "do()") <|> eof) $> ()
+skipDisabled = string "don't()" *> manyTill anySingle (void (string "do()") <|> eof) $> ()
