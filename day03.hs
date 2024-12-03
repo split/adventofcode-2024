@@ -6,7 +6,6 @@ import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Char (char, string)
 import Text.Megaparsec.Char.Lexer (decimal)
-import Data.Functor
 
 type Parser = Parsec Void String
 
@@ -20,4 +19,4 @@ parser skip = many $ try (manyTill skip (lookAhead (try mul)) *> mul)
 mul :: Parser Int
 mul = string "mul" *> between (char '(') (char ')') ((*) <$> decimal <* char ',' <*> decimal)
 
-skipDisabled = string "don't()" *> manyTill anySingle (void (string "do()") <|> eof) $> ()
+skipDisabled = void $ string "don't()" *> manyTill anySingle (string "do()")
