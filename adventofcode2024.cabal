@@ -7,5 +7,5 @@ common warnings
     ghc-options: -Wall -O2
 
 library
-    build-depends:  base ^>=4.16.3.0, megaparsec, text
+    build-depends:  base ^>=4.16.3.0, megaparsec, text, split, containers
     default-language: GHC2021

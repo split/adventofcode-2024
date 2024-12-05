@@ -40,6 +40,6 @@ build/%.example.output: % %.example
 %:: %.hs
 	@ghc -outputdir build $(FLAGS) -o $@ $<
 
-.PHONY: clean
+.PHONY: clean watch
 clean:
 	@rm -rf build
