@@ -24,27 +24,25 @@ simulate :: (Warehouse, Pos) -> [Command] -> Warehouse
 simulate = (fst .) . foldl (\acc c -> fromMaybe acc (move acc c))
 
 move :: (Warehouse, Pos) -> Command -> Maybe (Warehouse, Pos)
-move = go
+move state c = go state
   where
-    go (wh, pos) c = do
+    go (wh, pos) = do
       from <- wh M.!? pos
       let pos' = newPos pos c
-      (wh', _) <- attempt (wh, pos') c
-      to <- wh' M.!? pos'
-      guard (to == '.')
+      wh' <- attempt (wh, pos')
       return (M.insert pos' from $ M.insert pos '.' wh', pos')
 
-    attempt (wh, pos') c = do
+    attempt (wh, pos') = do
       to <- wh M.!? pos'
-      case to of
+      fst <$> case to of
         '.' -> return (wh, pos')
         '[' | c `elem` "^v" -> do
-          (wh', _) <- go (wh, pos') c
-          go (wh', newPos pos' '>') c
+          (wh', _) <- go (wh, pos')
+          go (wh', newPos pos' '>')
         ']' | c `elem` "^v" -> do
-          (wh', _) <- go (wh, pos') c
-          go (wh', newPos pos' '<') c
-        _ -> go (wh, pos') c
+          (wh', _) <- go (wh, pos')
+          go (wh', newPos pos' '<')
+        _ -> go (wh, pos')
 
 newPos :: (Num a, Num b) => (a, b) -> Char -> (a, b)
 newPos (x, y) c = case c of
