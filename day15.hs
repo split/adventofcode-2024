@@ -34,15 +34,12 @@ move state c = go state
 
     attempt (wh, pos') = do
       to <- wh M.!? pos'
+      let branch dir = do (wh', _) <- go (wh, pos'); go (wh', newPos pos' dir)
       fst <$> case to of
-        '.' -> return (wh, pos')
-        '[' | c `elem` "^v" -> do
-          (wh', _) <- go (wh, pos')
-          go (wh', newPos pos' '>')
-        ']' | c `elem` "^v" -> do
-          (wh', _) <- go (wh, pos')
-          go (wh', newPos pos' '<')
-        _ -> go (wh, pos')
+          '.' -> return (wh, pos')
+          '[' | c `elem` "^v" -> branch '>'
+          ']' | c `elem` "^v" -> branch '<'
+          _ -> go (wh, pos')
 
 newPos :: (Num a, Num b) => (a, b) -> Char -> (a, b)
 newPos (x, y) c = case c of
