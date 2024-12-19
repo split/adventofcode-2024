@@ -18,7 +18,6 @@ buildDesign towels xs = dp !! length xs
     dp = [tryDesign i | i <- [0 .. length xs]]
     tryDesign i
       | i == 0 = 1
-      | otherwise = sum [dp !! (i - length t) | t <- towels, t `isSuffixOf` take i xs, i >= length t]
+      | otherwise = sum [dp !! (i - length t) | t <- towels, t `isSuffixOf` take i xs]
 
-parse :: String -> ([[Char]], [String])
 parse = ((,) . splitOn ", " . head <*> drop 2) . lines
