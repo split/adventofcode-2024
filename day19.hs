@@ -1,8 +1,7 @@
 module Main where
 
-import Data.List (isInfixOf, isPrefixOf, stripPrefix)
+import Data.List (isSuffixOf)
 import Data.List.Split (splitOn)
-import Data.Map.Strict qualified as M
 
 main = interact (unlines . sequence [part1, part2] . uncurry buildDesigns . parse)
 
@@ -14,15 +13,12 @@ buildDesigns :: [String] -> [String] -> [Int]
 buildDesigns towels = map (buildDesign towels)
 
 buildDesign :: [String] -> String -> Int
-buildDesign towels = fst . go M.empty
+buildDesign towels xs = dp !! length xs
   where
-    go dp xs
-      | null xs = (1, dp)
-      | xs `M.member` dp = (dp M.! xs, dp)
-      | otherwise = let (result, dp') = foldr design (0, dp) towels in (result, M.insert xs result dp')
-      where
-        design t (acc, dp)
-          | t `isPrefixOf` xs = let (dc, dp') = go dp (drop (length t) xs) in (acc + dc, dp <> dp')
-          | otherwise = (acc, dp)
+    dp = [tryDesign i | i <- [0 .. length xs]]
+    tryDesign i
+      | i == 0 = 1
+      | otherwise = sum [dp !! (i - length t) | t <- towels, t `isSuffixOf` take i xs, i >= length t]
 
+parse :: String -> ([[Char]], [String])
 parse = ((,) . splitOn ", " . head <*> drop 2) . lines
