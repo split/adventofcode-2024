@@ -25,13 +25,11 @@ race maxSkip track = do
   let cheatDists = zipWith (\se p -> cheat se p dists) [0 ..] path
    in return (length $ concat cheatDists)
   where
-    -- cheat :: (Int, Point) -> Map Point Int -> [Int]
     cheat skipEnd point = filter (<= save) . sort . M.elems . skips
       where
-        skips = M.differenceWithKey check (cheatRadius maxSkip point)
+        skips = M.differenceWith check (cheatRadius maxSkip point)
         save = if M.size track < 100 then (-1) else (-100)
-        check p skipLen skipStart = do
-          return $ skipStart - skipEnd + skipLen
+        check skipLen skipStart = return $ skipStart - skipEnd + skipLen
 
 cheatRadius :: Int -> Point -> Map Point Int
 cheatRadius maxDist (x, y) =
@@ -63,7 +61,6 @@ dijkstra start end points = step initialHeap initialDists M.empty
 backtrack :: Map Point Point -> Point -> [Point]
 backtrack preds end = end : maybe [] (backtrack preds) (end `M.lookup` preds)
 
--- neighbors :: Point -> Map Point Int -> Map Point Int
 neighbors point grid = M.fromList $ mapMaybe (\a -> (a, 1) <$ M.lookup a grid) $ neighborPoints point
 
 neighborPoints (x, y) = [(x + dx, y + dy) | (dx, dy) <- [(1, 0), (0, 1), (-1, 0), (0, -1)]]
