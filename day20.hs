@@ -2,7 +2,7 @@ module Main where
 
 import Control.Monad (guard)
 import qualified Data.Heap as H
-import Data.List (find, sort)
+import Data.List (find)
 import Data.Map (Map)
 import qualified Data.Map as M
 import Data.Maybe (mapMaybe)
@@ -25,7 +25,7 @@ race maxSkip track = do
   let cheatDists = zipWith (\se p -> cheat se p dists) [0 ..] path
    in return (length $ concat cheatDists)
   where
-    cheat skipEnd point = filter (<= save) . sort . M.elems . skips
+    cheat skipEnd point = filter (<= save) . M.elems . skips
       where
         skips = M.differenceWith check (cheatRadius maxSkip point)
         save = if M.size track < 100 then (-1) else (-100)
