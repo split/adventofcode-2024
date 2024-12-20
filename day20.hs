@@ -27,9 +27,9 @@ race maxSkip track = do
   where
     cheat skipEnd point = filter (<= save) . M.elems . skips
       where
-        skips = M.differenceWith check (cheatRadius maxSkip point)
+        skips = M.intersectionWith check (cheatRadius maxSkip point)
+        check skipLen skipStart = skipStart - skipEnd + skipLen
         save = if M.size track < 100 then (-1) else (-100)
-        check skipLen skipStart = return $ skipStart - skipEnd + skipLen
 
 cheatRadius :: Int -> Point -> Map Point Int
 cheatRadius maxDist (x, y) =
