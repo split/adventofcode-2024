@@ -1,11 +1,10 @@
 module Main where
 
-import Data.List (intercalate, isPrefixOf, nub, sort, tails, maximumBy)
+import Data.List (intercalate, isPrefixOf, nub, tails, maximumBy)
 import Data.Map.Strict qualified as M
 import Data.Maybe (mapMaybe)
 import Data.Set qualified as S
 import Data.Tuple (swap)
-import Debug.Trace
 import Data.Ord (comparing)
 
 type Vertex = String
@@ -27,12 +26,11 @@ clique graph = flip go S.empty
     go v cq
       | cq `S.isSubsetOf` get v = foldr go (S.insert v cq) (get v)
       | otherwise = cq
-      
 
 setsOfThree graph = mapMaybe go . concatMap trie $ vertices graph
   where
     get = getVertices graph
-    trie v = (v,) <$> (pairs $ get v)
+    trie v = (v,) <$> pairs (get v)
     go (v1, (v2, v3))
       | v2 `elem` get v3 = return [v1, v2, v3]
       | otherwise = Nothing
